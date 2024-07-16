@@ -34,7 +34,7 @@ class HeartCustomPainter extends CustomPainter {
 
     for (double t = -180; t < 180; t++) {
       double rad = t * (pi / 180);
-      double x = 7 * pow(sin(rad), 3) as double;
+      double x = 13 * pow(sin(rad), 3) as double;
       double y = (10 * cos(rad) - 3 * cos(2 * rad) - 2 * cos(3 * rad) - cos(4 * rad) );
 
       points.add(Offset(25 * x, 15 * y));
@@ -43,17 +43,18 @@ class HeartCustomPainter extends CustomPainter {
     //canvas.drawPoints(PointMode.points, points, Paint()..color = Colors.red);
     canvas.save();
     canvas.rotate(180 * (pi / 180));
+    canvas.scale(0.5, 1.0);
     //canvas.drawRect(Rect.fromLTRB(0, 0, 100, 200), Paint()..color = Colors.green);
     List<double> listOfPoints = convertListOfOffsetsInArray(listOfOffsets: points);
     List<int> triangles = Earcut.triangulateRaw(listOfPoints);
     List<Offset> polygonOffset = convertListOfPositionsInListOfOffset(listOfPosition: triangles, offsetList: points);
 
-    Vertices vertices = Vertices(VertexMode.triangleStrip, polygonOffset);
+    Vertices vertices = Vertices(VertexMode.triangles, polygonOffset);
     canvas.drawVertices(vertices, BlendMode.color, Paint()..color = Colors.yellow);
     canvas.drawPoints(PointMode.polygon, points,
         Paint()
           ..color = Colors.red
-          ..strokeWidth = 3);
+          ..strokeWidth = 7);
     //canvas.rotate(45 * (pi / 180));
     canvas.restore();
 
