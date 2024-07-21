@@ -10,7 +10,7 @@ GlobalKey prv = GlobalKey();
 
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -24,6 +24,7 @@ class MyApp extends StatelessWidget {
       initialRoute: '/pages',
       getPages: [
         GetPage(name: '/pages', page: () => Intro(), binding: IntroBinding()),
+        GetPage(name: '/home', page: () => Home(), binding: HomeBinding())
       ],
     );
   }
