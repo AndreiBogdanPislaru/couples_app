@@ -9,13 +9,13 @@ import '../customPainter/heartCustomPainter.dart';
 
 class Intro extends StatefulWidget {
   Intro({Key? key}) : super(key: key);
-  final IntroController controller = Get.put(IntroController());
 
   @override
   State<StatefulWidget> createState() => IntroState();
 }
 
 class IntroState extends State<Intro> with SingleTickerProviderStateMixin {
+  final IntroController controller = Get.put(IntroController());
   late AnimationController _animationController;
   late Animation<Color?> _animationColor1;
   late Animation<Color?> _animationColor2;
@@ -26,6 +26,8 @@ class IntroState extends State<Intro> with SingleTickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
+
+    controller.paint.value.color = Colors.purpleAccent;
 
     _animationController = AnimationController(
       vsync: this,
@@ -90,14 +92,32 @@ class IntroState extends State<Intro> with SingleTickerProviderStateMixin {
         ),
         Align(
           alignment: Alignment.center,
-          child: TextButton(
-            onPressed: () {
-              Get.toNamed('/home');
-            },
-            child: Text("Avanti >>",
-            style: TextStyle(color: Colors.red,
-            fontSize: 37, fontWeight: FontWeight.w900),),
+          child: Obx(
+            () => TextButton(
+              onPressed: () {
+                if(controller.counter.value == 6) {
+                  controller.counter.value = 0;
+                  Get.toNamed('/home');
+                }
+                else {
+                  int counter = Random().nextInt(10);
+                  controller.counter.value++;
+                  if(counter > 8) controller.paint.value.color = Colors.red;
+                  else if(counter > 6) controller.paint.value.color = Colors.green;
+                  else if(counter > 4) controller.paint.value.color = Colors.blue;
+                  else controller.paint.value.color = Colors.yellow;
+                }
+
+              },
+              child: Text("Avanti >>",
+              style: TextStyle(color: controller.paint.value.color,
+              fontSize: 37, fontWeight: FontWeight.w900),),
+            ),
           ),
+        ),
+        Obx(
+          () => Text("You pressed ${controller.counter.value} times",
+            style: TextStyle(fontSize: 24, color: Colors.amberAccent),),
         )
       ],
     );
