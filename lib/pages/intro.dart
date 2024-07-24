@@ -1,11 +1,14 @@
 import 'dart:async';
 import 'dart:math';
+import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:heart_bit_love/controllers/introController.dart';
 
 import '../customPainter/heartCustomPainter.dart';
+import '../customPainter/introPainter.dart';
 
 class Intro extends StatefulWidget {
   Intro({Key? key}) : super(key: key);
@@ -22,10 +25,23 @@ class IntroState extends State<Intro> with SingleTickerProviderStateMixin {
   late Timer _timer;
   Color _firstColor = Colors.yellow;
   Color _secondColor = Colors.red;
+  ui.Image? image;
+
+  Future<void> _loadImage(String asset) async {
+    final ByteData data = await rootBundle.load(asset);
+    final Completer<ui.Image> completer = Completer();
+    ui.decodeImageFromList(Uint8List.view(data.buffer), (ui.Image img) {
+      completer.complete(img);
+      setState(() {
+        image = img;
+      });
+    });
+  }
 
   @override
   void initState() {
     super.initState();
+    _loadImage('assets/immagine_di_prova.jpg');
 
     controller.paint.value.color = Colors.purpleAccent;
 
@@ -118,6 +134,15 @@ class IntroState extends State<Intro> with SingleTickerProviderStateMixin {
         Obx(
           () => Text("You pressed ${controller.counter.value} times",
             style: TextStyle(fontSize: 24, color: Colors.amberAccent),),
+        ),
+        Expanded(
+          child: Container(
+            padding: EdgeInsets.all(35),
+            width: double.infinity,
+            child: CustomPaint(
+              painter: (image != null) ? IntroPainter(image: image) : null,
+            ),
+          ),
         )
       ],
     );
