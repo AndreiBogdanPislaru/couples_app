@@ -15,13 +15,15 @@ class IntroPainter extends CustomPainter {
   canvas.drawCircle(Offset(0.0, 0.0), 10, Paint()..color = Colors.yellow );
 
   ui.Rect rect = ui.Rect.fromPoints(
-      ui.Offset(size.width / 5, size.height / 5),
-      ui.Offset(4 * size.width / 5, 4 * size.height / 5));
+      ui.Offset(size.width / 6, size.height / 6),
+      ui.Offset(5 * size.width / 6, 5 * size.height / 6));
 
-  Matrix4 matrix4 = Matrix4.identity()..scale(
+  Matrix4 matrix4 = Matrix4.identity()
+    ..scale(
       (rect.width / image!.width),
       (rect.height / image!.height)
-  );
+    )
+    ..setTranslationRaw(rect.width / 4, rect.height / 4, 0.0);
 
   canvas.drawRect(rect,
       ui.Paint()..shader =
