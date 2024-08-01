@@ -12,6 +12,21 @@ class Home extends StatefulWidget {
 
 class HomeState extends State<Home> {
   final HomeController controller = Get.put(HomeController());
+  List<Color> drawColors = [...Colors.primaries, ...Colors.accents];
+
+  final Map<String, Color> availableColors = {
+    "red" : Colors.red,
+    "yellow" : Colors.yellow,
+    "blue" : Colors.blue,
+    "pink" : Colors.pinkAccent.shade100,
+    "brown" : Colors.brown,
+    "white" : Colors.white,
+    "black" : Colors.black,
+    "grey" : Colors.grey,
+    "green" : Colors.green,
+    "orange" : Colors.deepOrange,
+    "purple" : Colors.purpleAccent
+  };
 
   @override
   void didChangeDependencies() {
@@ -30,15 +45,36 @@ class HomeState extends State<Home> {
             color: Colors.deepPurple,
             child: Column(
               children: [
-                Container(
-                  height: controller.size.value!.height / 4,
-                  color: Colors.red,
-                  child: TextButton(
-                    onPressed: () {
-                      controller.listOfPoints.clear();
-                    },
-                    child: Text("BOOOOOOOOOOM"),
-                  ),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Container(
+                        color: Colors.red,
+                        child: TextButton(
+                          onPressed: () {
+                            controller.listsOfPoints.clear();
+                          },
+                          child: Text("BOOOOOM"),
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                        child: Container(
+                          color: Colors.green,
+                          child: DropdownButton(
+                            items: availableColors.keys.toList().map<DropdownMenuItem<String>>((String color) {
+                              return DropdownMenuItem(
+                                value: color,
+                                  child: Text(color)
+                              );
+                            }).toList(),
+                            onChanged: (value) {
+                              controller.chosenColor.value = availableColors[value]!;
+                            },
+                          ),
+                        )
+                    )
+                  ],
                 ),
                 Align(
                   alignment: Alignment.topLeft,
@@ -49,16 +85,23 @@ class HomeState extends State<Home> {
                         color: Colors.yellow,
                         child: Obx(
                           () => CustomPaint(
-                            painter:
-                                DrawNote(listOfCursorPosition: controller.listOfPoints.value),
+                            painter: DrawNote(
+                                listOfListsOfCursorPosition: controller.listsOfPoints.value,
+                                color: controller.chosenColor.value),
                           ),
                         ),
                       ),
                       Container(
                         height: 600,
                         child: GestureDetector(
+                          onPanStart: (details) {
+                            controller.listsOfPoints
+                                .add(<Offset>[details.localPosition]);
+                          },
                           onPanUpdate: (details) {
-                            controller.listOfPoints.add(details.localPosition);
+                            controller.listsOfPoints.last
+                                .add(details.localPosition);
+                            controller.listsOfPoints.refresh();
                           },
                         ),
                       )
